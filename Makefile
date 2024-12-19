@@ -2,6 +2,8 @@
 CXX := g++
 CXXFLAGS := -std=c++17 -Wall -Wextra -I/usr/include
 LDFLAGS := -L/usr/lib -lcurl
+CXXFLAGS += $(shell pkg-config --cflags gtk+-3.0)
+LDFLAGS += $(shell pkg-config --libs gtk+-3.0)
 
 # Target executable
 TARGET := main
