@@ -1,34 +1,26 @@
-# Compiler and flags
 CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra -I/usr/include
-LDFLAGS := -L/usr/lib -lcurl
-CXXFLAGS += $(shell pkg-config --cflags gtk+-3.0)
-LDFLAGS += $(shell pkg-config --libs gtk+-3.0)
+CXXFLAGS := -std=c++17 -Wall -Wextra -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/cairo -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/libpng16 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/dbus-1.0/include -I/usr/include/fribidi -I/usr/include/harfbuzz -I/usr/include/pixman-1 -I/usr/include/freetype2 -I/usr/include/gio-unix-2.0 -pthread -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include -I./cJSON 
+LDFLAGS := $(shell pkg-config --libs gtk+-3.0)
 
-# Target executable
+# Include directories
+CXXFLAGS += -I./cJSON 
+
 TARGET := main
+SRCS := main.cpp cJSON/cJSON.c
+OBJS := $(SRCS:.cpp=.o) $(SRCS:.c=.o)
 
-# Source files
-SRCS := main.cpp
-
-# Object files
-OBJS := $(SRCS:.cpp=.o)
-
-# Default target
 all: $(TARGET)
-	./$(TARGET)
 
-# Build the target
 $(TARGET): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(OBJS) $(LDFLAGS)
+	$(CXX) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
 
-# Compile source files into object files
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean up build files
+%.o: cJSON/%.c
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
 clean:
 	rm -f $(TARGET) $(OBJS)
 
-# Phony targets
 .PHONY: all clean
